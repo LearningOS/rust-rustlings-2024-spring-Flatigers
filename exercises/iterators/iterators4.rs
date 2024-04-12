@@ -15,6 +15,8 @@ pub fn factorial(num: u64) -> u64 {
     // For an extra challenge, don't use:
     // - recursion
     // Execute `rustlings hint iterators4` for hints.
+    let r = (1..num+1);
+    r.into_iter().reduce(|x, y| x * y).unwrap()
 }
 
 #[cfg(test)]
