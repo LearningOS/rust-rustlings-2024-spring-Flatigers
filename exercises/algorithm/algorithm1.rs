@@ -2,13 +2,12 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
 use std::vec::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 struct Node<T> {
     val: T,
     next: Option<NonNull<Node<T>>>,
@@ -36,17 +35,21 @@ impl<T> Default for LinkedList<T> {
 }
 
 impl<T> LinkedList<T> {
-    pub fn new() -> Self {
+     pub fn new() -> Self {
         Self {
             length: 0,
             start: None,
             end: None,
         }
     }
+}
+
+impl<T: Clone + PartialOrd + Ord> LinkedList<T> {
 
     pub fn add(&mut self, obj: T) {
-        let mut node = Box::new(Node::new(obj));
-        node.next = None;
+        let node = Box::new(Node::new(obj));
+        // Seems useless
+        // node.next = None;
         let node_ptr = Some(unsafe { NonNull::new_unchecked(Box::into_raw(node)) });
         match self.end {
             None => self.start = node_ptr,
@@ -69,14 +72,34 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	pub fn merge(list_a: LinkedList<T>, list_b: LinkedList<T>) -> Self
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+        let mut new_list = Self::new();
+        let (mut current_a, mut current_b) = (list_a.start, list_b.start);
+
+
+        let mut vec = Vec::new();
+
+        while current_a.is_some() { unsafe {
+            let node_a = current_a.unwrap().as_ptr();
+            vec.push((*node_a).val.clone()); 
+            current_a = (*node_a).next;
+        }}
+
+        while current_b.is_some() { unsafe {
+            let node_b = current_b.unwrap().as_ptr(); 
+            vec.push((*node_b).val.clone());
+            current_b = (*node_b).next;
+        }}
+
+        vec.sort_unstable();
+
+        for value in vec {
+            new_list.add(value);
         }
+
+
+        new_list
 	}
 }
 
@@ -170,4 +193,8 @@ mod tests {
 			assert_eq!(target_vec[i],*list_c.get(i as i32).unwrap());
 		}
 	}
+}
+
+pub fn main() {
+
 }

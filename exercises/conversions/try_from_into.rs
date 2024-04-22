@@ -38,9 +38,9 @@ enum IntoColorError {
 
 // Tuple implementation
 fn check_rgb_ok(r: i16, g: i16, b: i16) -> Result<Color, IntoColorError> {
-    if r >= 0 && r <= 255 
-    && g >= 0 && g <= 255 
-    && b >= 0 && b <= 255 {
+    if (0..=255).contains(&r)
+    && (0..=255).contains(&g)
+    && (0..=255).contains(&b) {
         Ok(Color {
             red: r as u8,
             green: g as u8,
@@ -56,7 +56,7 @@ impl TryFrom<(i16, i16, i16)> for Color {
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
 
         let (red, green, blue) = tuple;
-        return check_rgb_ok(red, green, blue) 
+        check_rgb_ok(red, green, blue) 
     }
 }
 
